@@ -21,14 +21,14 @@ window.onload=function(){
         input.focus();
 
         input.onblur=function(){
-            save()
+            save(input)
 
         }
 
         input.onkeydown=function(event){
 
             if(event.keyCode==13){
-                save()
+                save(input)
             }
 
 
@@ -39,11 +39,11 @@ window.onload=function(){
     }
 
 
-    function save(){
+    function save(input){
 
         let span=document.createElement("span");
 
-        if(!/^\s*$/.test(input.value)){
+        if(!/^\s*$/.test(input.value) ){
             span.innerText=input.value
             span.style.position="absolute";
 
@@ -53,6 +53,7 @@ window.onload=function(){
 
             input.parentNode.replaceChild(span,input);
 
+
             span.ondblclick=function(event){
                 event=event||window.event;
                 let newInput=document.createElement("input")
@@ -61,17 +62,15 @@ window.onload=function(){
                 newInput.style.left=span.style.left;
                 newInput.style.top=span.style.top;
                 newInput.value=span.innerText;
-                newInput.onblur=function(){save()
-                }
+                newInput.onblur=function(){save(newInput)}
                 newInput.onkeydown=function(event){
-
                     if(event.keyCode==13){
-                        save()
+                        save(newInput)
                     }
-
                 }
 
                 span.parentNode.replaceChild(newInput,span)
+
 
                 newInput.focus()
 
