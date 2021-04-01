@@ -60,7 +60,7 @@ function drag(obj){
 
 window.onload = function () {
     let input;
-    let flag=0;
+    let flag = 0;
     let rihgt = document.querySelector(".right");
 
     function onBlurInput(input) {
@@ -80,13 +80,32 @@ window.onload = function () {
             if (event.keyCode == 13) {
                 // console.log(2);
                 flag = 1;
+                let div = input.parentNode;
                 save(input);
+                let newInput = document.createElement("input");
+
+                let offsetLeft = 20;
+                let offsetTop = 20;
+
+                newInput.type = "text";
+                newInput.style.position = "absolute";
+
+                newInput.style.left = (parseInt(input.style.left) + offsetLeft) + "px";
+                newInput.style.top = (parseInt(input.style.top) + offsetTop) + "px";
+
+
+                onBlurInput(newInput);
+
+                onKeyDownInput(newInput);
+
+                div.appendChild(newInput);
+
+                newInput.focus();
                 // console.log(4)
                 flag = 0;
             }
         };
     }
-
 
 
     rihgt.ondblclick = function (event) {
@@ -135,7 +154,6 @@ window.onload = function () {
             input.parentNode.replaceChild(span, input);
 
 
-
             //span绑定双击事件
             span.ondblclick = function (event) {
 
@@ -155,8 +173,7 @@ window.onload = function () {
                 onKeyDownInput(newInput);
 
 
-                span.parentNode.replaceChild(newInput,span);
-
+                span.parentNode.replaceChild(newInput, span);
 
 
                 newInput.focus();
@@ -167,12 +184,8 @@ window.onload = function () {
             drag(span);
 
 
-
         } else {
             input.parentNode.removeChild(input);
         }
     }
-
-
-
 }
