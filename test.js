@@ -1,6 +1,6 @@
-function drag(obj) {
+function drag(obj){
     //当鼠标在被拖拽元素上按下时，开始拖拽  onmousedown
-    obj.onmousedown = function (event) {
+    obj.onmousedown = function(event){
 
         //设置box1捕获所有鼠标按下的事件
         /*
@@ -22,7 +22,7 @@ function drag(obj) {
 
 
         //为document绑定一个onmousemove事件
-        document.onmousemove = function (event) {
+        document.onmousemove = function(event){
             event = event || window.event;
             //当鼠标移动时被拖拽元素跟随鼠标移动 onmousemove
             //获取鼠标的坐标
@@ -30,13 +30,13 @@ function drag(obj) {
             var top = event.clientY - ot;
 
             //修改box1的位置
-            obj.style.left = left + "px";
-            obj.style.top = top + "px";
+            obj.style.left = left+"px";
+            obj.style.top = top+"px";
 
         };
 
         //为document绑定一个鼠标松开事件
-        document.onmouseup = function () {
+        document.onmouseup = function(){
             //当鼠标松开时，被拖拽元素固定在当前位置  onmouseup
             //取消document的onmousemove事件
             document.onmousemove = null;
@@ -60,21 +60,33 @@ function drag(obj) {
 
 window.onload = function () {
     let input;
+    let flag=0;
     let rihgt = document.querySelector(".right");
 
     function onBlurInput(input) {
         input.onblur = function () {
+            // console.log(1);
+            if (flag == 1) {
+                return;
+            }
             save(input);
+
         };
     }
 
     function onKeyDownInput(input) {
-        input.onkeydown = function (event) {
+        input.onkeypress = function (event) {
+
             if (event.keyCode == 13) {
+                // console.log(2);
+                flag = 1;
                 save(input);
+                // console.log(4)
+                flag = 0;
             }
         };
     }
+
 
 
     rihgt.ondblclick = function (event) {
@@ -99,7 +111,7 @@ window.onload = function () {
         //对input失去焦点绑定
         onBlurInput(input);
 
-        //对input键盘按下绑定
+        //对input键盘按下绑定,会同时执行鼠标事件的同时会触发失去焦点事件
         onKeyDownInput(input);
 
 
@@ -119,7 +131,10 @@ window.onload = function () {
             span.style.top = input.style.top;
             span.style.backgroundColor = "red";
 
+
             input.parentNode.replaceChild(span, input);
+
+
 
             //span绑定双击事件
             span.ondblclick = function (event) {
@@ -133,15 +148,18 @@ window.onload = function () {
                 newInput.style.top = span.style.top;
                 newInput.value = span.innerText;
 
+                span.parentNode.appendChild(newInput);
+
                 onBlurInput(newInput);
 
                 onKeyDownInput(newInput);
 
-                span.parentNode.replaceChild(newInput, span);
+
+                span.parentNode.replaceChild(newInput,span);
+
 
 
                 newInput.focus();
-
                 event ? event.cancelBubble = true : event.stopPropagation();
             }
 
@@ -149,8 +167,12 @@ window.onload = function () {
             drag(span);
 
 
+
         } else {
             input.parentNode.removeChild(input);
         }
     }
+
+
+
 }
