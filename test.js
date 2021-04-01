@@ -1,3 +1,145 @@
+window.onload = function () {
+    window.flag = 0
+    let input
+    let rihgt = document.querySelector(".right")
+    //!todo 按delete删除
+    //!todo 不能移过规定区域
+    //!todo 数据展示
+    //!todo 按键与指定单词监听
+
+
+
+
+    rihgt.ondblclick = function (event) {
+        event = event || window.event;
+
+
+        input = document.createElement("input")
+
+        let x = event.offsetX;
+        let y = event.offsetY;
+
+        input.style.position = "absolute";
+        input.type = "text";
+
+        input.style.left = x + "px";
+        input.style.top = y + "px";
+
+        rihgt.appendChild(input);
+
+        input.focus();
+
+        //对input失去焦点绑定
+        onBlurInput(input);
+
+        //对input键盘按下绑定,会同时执行鼠标事件的同时会触发失去焦点事件
+        onKeyDownInput(input);
+
+
+    }
+
+
+
+
+}
+
+function onBlurInput(input) {
+    input.onblur = function () {
+        // console.log(1);
+        if (flag == 1) {
+            return;
+        }
+        save(input);
+
+    };
+}
+
+function onKeyDownInput(input) {
+    input.onkeypress = function (event) {
+        if (event.keyCode == 13) {
+            // console.log(2);
+            flag = 1;
+            let div = input.parentNode;
+            save(input);
+            let newInput = document.createElement("input");
+
+            let offsetLeft = 20;
+            let offsetTop = 20;
+
+            newInput.type = "text";
+            newInput.style.position = "absolute";
+
+            newInput.style.left = (parseInt(input.style.left)+offsetLeft)+"px";
+            newInput.style.top = (parseInt(input.style.top)+offsetTop)+"px";
+
+
+            onBlurInput(newInput);
+
+            onKeyDownInput(newInput);
+
+            div.appendChild(newInput);
+
+            newInput.focus();
+            // console.log(4)
+            flag = 0;
+        }
+    };
+}
+function save(input) {
+
+    let span = document.createElement("span");
+
+    //获取input的文本，并判断
+    if (!/^\s*$/.test(input.value)) {
+        span.innerText = input.value;
+        span.style.position = "absolute";
+
+        span.style.left = input.style.left;
+        span.style.top = input.style.top;
+        span.style.backgroundColor = "red";
+
+
+        input.parentNode.replaceChild(span, input);
+
+
+
+        //span绑定双击事件
+        span.ondblclick = function (event) {
+
+            event = event || window.event;
+
+            let newInput = document.createElement("input")
+            newInput.type = "text";
+            newInput.style.position = "absolute";
+            newInput.style.left = span.style.left;
+            newInput.style.top = span.style.top;
+            newInput.value = span.innerText;
+
+            span.parentNode.appendChild(newInput);
+
+            onBlurInput(newInput);
+
+            onKeyDownInput(newInput);
+
+
+            span.parentNode.replaceChild(newInput,span);
+
+
+
+            newInput.focus();
+            event ? event.cancelBubble = true : event.stopPropagation();
+        }
+
+        //对span拖拽实现
+        drag(span);
+
+
+
+    } else {
+        input.parentNode.removeChild(input);
+    }
+}
+
 function drag(obj){
     //当鼠标在被拖拽元素上按下时，开始拖拽  onmousedown
     obj.onmousedown = function(event){
@@ -56,136 +198,4 @@ function drag(obj){
         return false;
 
     };
-}
-
-window.onload = function () {
-    let input;
-    let flag = 0;
-    let rihgt = document.querySelector(".right");
-
-    function onBlurInput(input) {
-        input.onblur = function () {
-            // console.log(1);
-            if (flag == 1) {
-                return;
-            }
-            save(input);
-
-        };
-    }
-
-    function onKeyDownInput(input) {
-        input.onkeypress = function (event) {
-
-            if (event.keyCode == 13) {
-                // console.log(2);
-                flag = 1;
-                let div = input.parentNode;
-                save(input);
-                let newInput = document.createElement("input");
-
-                let offsetLeft = 20;
-                let offsetTop = 20;
-
-                newInput.type = "text";
-                newInput.style.position = "absolute";
-
-                newInput.style.left = (parseInt(input.style.left) + offsetLeft) + "px";
-                newInput.style.top = (parseInt(input.style.top) + offsetTop) + "px";
-
-
-                onBlurInput(newInput);
-
-                onKeyDownInput(newInput);
-
-                div.appendChild(newInput);
-
-                newInput.focus();
-                // console.log(4)
-                flag = 0;
-            }
-        };
-    }
-
-
-    rihgt.ondblclick = function (event) {
-        event = event || window.event;
-
-
-        input = document.createElement("input");
-
-        let x = event.offsetX;
-        let y = event.offsetY;
-
-        input.style.position = "absolute";
-        input.type = "text";
-
-        input.style.left = x + "px";
-        input.style.top = y + "px";
-
-        rihgt.appendChild(input);
-
-        input.focus();
-
-        //对input失去焦点绑定
-        onBlurInput(input);
-
-        //对input键盘按下绑定,会同时执行鼠标事件的同时会触发失去焦点事件
-        onKeyDownInput(input);
-
-
-    }
-
-
-    function save(input) {
-
-        let span = document.createElement("span");
-
-        //获取input的文本，并判断
-        if (!/^\s*$/.test(input.value)) {
-            span.innerText = input.value;
-            span.style.position = "absolute";
-
-            span.style.left = input.style.left;
-            span.style.top = input.style.top;
-            span.style.backgroundColor = "red";
-
-
-            input.parentNode.replaceChild(span, input);
-
-
-            //span绑定双击事件
-            span.ondblclick = function (event) {
-
-                event = event || window.event;
-
-                let newInput = document.createElement("input")
-                newInput.type = "text";
-                newInput.style.position = "absolute";
-                newInput.style.left = span.style.left;
-                newInput.style.top = span.style.top;
-                newInput.value = span.innerText;
-
-                span.parentNode.appendChild(newInput);
-
-                onBlurInput(newInput);
-
-                onKeyDownInput(newInput);
-
-
-                span.parentNode.replaceChild(newInput, span);
-
-
-                newInput.focus();
-                event ? event.cancelBubble = true : event.stopPropagation();
-            }
-
-            //对span拖拽实现
-            drag(span);
-
-
-        } else {
-            input.parentNode.removeChild(input);
-        }
-    }
 }
