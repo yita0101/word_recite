@@ -1,0 +1,77 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.wrapper{
+    width: 100%;
+    display: flex;
+}
+
+
+.right{
+    width: 50%;
+    height: 1000px;
+    background-color:#BFA;
+    position: relative;
+}
+
+.left{
+    width: 50%;
+    height: 1000px;
+    background-color: #D7E8BA;
+    position: relative;
+    overflow:auto;
+}
+
+.word_list {
+    width: 100%;
+    position: absolute;
+    top: 40%;
+    /*transition-property: top;*/
+    /*transition-duration: 500ms;*/
+    /*transition-timing-function: linear;*/
+}
+
+.word_wrapper {
+    display: flex;
+    margin: 0 20px;
+    font-size: 20pt;
+    border-top: 5px solid transparent;
+}
+.word_wrapper>.word{
+    flex: 1;
+}
+.unit{
+    background-color: #A4B0F5;
+    font-size: 20pt;
+}
+
+.recite{
+    border-top: 5px solid red;
+    border-bottom: 5px solid red;
+    padding: 0 20px;
+    margin: 5px 0;
+}
+.isShow{
+    display: none;
+}
+::-webkit-scrollbar {
+    /*隐藏滚轮*/
+    display: none;
+}
+
+input{
+    width: 150px;
+    font-size: 20pt;
+}
+
+/*取消双击选中文字*/
+span,div{
+    -moz-user-select:none;/*火狐*/
+    -webkit-user-select:none;/*webkit浏览器*/
+    -ms-user-select:none;/*IE10*/
+    -khtml-user-select:none;/*早期浏览器*/
+    user-select:none;
+}
+
+

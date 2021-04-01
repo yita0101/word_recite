@@ -4,40 +4,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="./css/test.css">
     <style>
-        *{
-            margin: 0;
-            padding: 0;
-        }
-        .right{
-            width: 50%;
-            height: 1000px;
-            background-color:#BFA;
-            position: relative;
-            left: 50%;
-            top: -1000px;
-
-        }
-        .left {
-            width: 50%;
-            height: 1000px;
-            background-color: aqua;
-
-        }
 
     </style>
-    <script type="text/javascript" src="./test.js"></script>
+
 </head>
 <body>
-<div class="left">
+   <div class="wrapper">
+       <div class="left" >
+           <ul class="word_list isShow" ref="word_list">
+               <li v-for="(item,index) in word_list" :key="index" :class="{word_wrapper:true,recite:index===0}">
+                   <div class="word" >{{item.word}}</div>
+                   <div class="meaning"  >{{item.meaning}}</div>
+               </li>
+           </ul>
+       </div>
+       <div class="right" >
 
-</div>
-<div class="right" >
-
-</div>
+       </div>
+   </div>
 </body>
+<script type="text/javascript" src="js/test-left.js"></script>
+<script type="text/javascript" src="js/test-right.js"></script>
+<script type="text/javascript" src="./js/vue.js"></script>
+<script>
+    window.onload = function () {
+    //    必须先加载left再加载right，因为right应用left的变量和方法
+        loadingLeft()
+        loadingRight()
+    };
+    new Vue({
+        el:".left",
+        data:{
+            isShow:false,
+            word_list:[
+                //换行问题无法解决
+                // {word:'123123123123123123123',meaning:'adj.无触角的'},
+                {word:'abactinal',meaning:'adj.无触角的'},
+                {word:'abandon',meaning:'v.抛弃放弃'},
+                {word:'meaning',meaning:'n.意思'},
+                {word:'scroll',meaning:'v.滚屏;滚动'},
+                {word:'subscribe',meaning:'v.订阅'},
+                {word:'publish',meaning:'v.出版'},
+                {word:'event',meaning:'n.事件'},
+                {word:'copyright',meaning:'n.版权,著作权'},
+                {word:'cranny',meaning:'n.裂缝,裂隙'},
+                {word:'crap',meaning:'n.废物,赌输的一注,废话vi.掷骰子'},
+                {word:'gymnastic',meaning:'adj.体操的,体育的n.训练课程'},
+                {word:'graceless',meaning:'adj.粗俗的'},
+                {word:'grad',meaning:'n.毕业生,校友'},
+                {word:'romantically',meaning:'adv.浪漫地'},
+                {word:'rompish',meaning:'adj.乱跳的,顽皮的'},
+                {word:'rookie',meaning:'n.新手'},
+                {word:'abactinal',meaning:'adj.无触角的'},
+                {word:'abandon',meaning:'v.抛弃放弃'},
+                {word:'meaning',meaning:'n.意思'},
+                {word:'scroll',meaning:'v.滚屏;滚动'},
+                {word:'subscribe',meaning:'v.订阅'},
+                {word:'publish',meaning:'v.出版'},
+                {word:'event',meaning:'n.事件'},
+                {word:'copyright',meaning:'n.版权,著作权'},
+                {word:'cranny',meaning:'n.裂缝,裂隙'},
+                {word:'crap',meaning:'n.废物,赌输的一注,废话vi.掷骰子'},
+                {word:'gymnastic',meaning:'adj.体操的,体育的n.训练课程'},
+                {word:'graceless',meaning:'adj.粗俗的'},
+                {word:'grad',meaning:'n.毕业生,校友'},
+                {word:'romantically',meaning:'adv.浪漫地'},
+                {word:'rompish',meaning:'adj.乱跳的,顽皮的'},
+                {word:'rookie',meaning:'n.新手'},
+                {word:'abactinal',meaning:'adj.无触角的'},
+                {word:'abandon',meaning:'v.抛弃放弃'},
+                {word:'meaning',meaning:'n.意思'},
+                {word:'scroll',meaning:'v.滚屏;滚动'},
+                {word:'subscribe',meaning:'v.订阅'},
+                {word:'publish',meaning:'v.出版'},
+                {word:'event',meaning:'n.事件'},
+                {word:'copyright',meaning:'n.版权,著作权'},
+                {word:'cranny',meaning:'n.裂缝,裂隙'},
+                {word:'crap',meaning:'n.废物,赌输的一注,废话vi.掷骰子'},
+                {word:'gymnastic',meaning:'adj.体操的,体育的n.训练课程'},
+                {word:'graceless',meaning:'adj.粗俗的'},
+                {word:'grad',meaning:'n.毕业生,校友'},
+                {word:'romantically',meaning:'adv.浪漫地'},
+                {word:'rompish',meaning:'adj.乱跳的,顽皮的'},
+                {word:'rookie',meaning:'n.新手'},
+                {word:'abactinal',meaning:'adj.无触角的'},
+                {word:'abandon',meaning:'v.抛弃放弃'},
+                {word:'meaning',meaning:'n.意思'},
+                {word:'scroll',meaning:'v.滚屏;滚动'},
+                {word:'subscribe',meaning:'v.订阅'},
+                {word:'publish',meaning:'v.出版'},
+                {word:'event',meaning:'n.事件'},
+                {word:'copyright',meaning:'n.版权,著作权'},
+                {word:'cranny',meaning:'n.裂缝,裂隙'},
+                {word:'crap',meaning:'n.废物,赌输的一注,废话vi.掷骰子'},
+                {word:'gymnastic',meaning:'adj.体操的,体育的n.训练课程'},
+                {word:'graceless',meaning:'adj.粗俗的'},
+                {word:'grad',meaning:'n.毕业生,校友'},
+                {word:'romantically',meaning:'adv.浪漫地'},
+                {word:'rompish',meaning:'adj.乱跳的,顽皮的'},
+                {word:'rookie',meaning:'n.新手'},
+                {word:'abactinal',meaning:'adj.无触角的'},
+                {word:'abandon',meaning:'v.抛弃放弃'},
+                {word:'meaning',meaning:'n.意思'},
+                {word:'scroll',meaning:'v.滚屏;滚动'},
+                {word:'subscribe',meaning:'v.订阅'},
+                {word:'publish',meaning:'v.出版'},
+                {word:'event',meaning:'n.事件'},
+                {word:'copyright',meaning:'n.版权,著作权'},
+                {word:'cranny',meaning:'n.裂缝,裂隙'},
+                {word:'crap',meaning:'n.废物,赌输的一注,废话vi.掷骰子'},
+                {word:'gymnastic',meaning:'adj.体操的,体育的n.训练课程'},
+                {word:'graceless',meaning:'adj.粗俗的'},
+                {word:'grad',meaning:'n.毕业生,校友'},
+                {word:'romantically',meaning:'adv.浪漫地'},
+                {word:'rompish',meaning:'adj.乱跳的,顽皮的'},
+                {word:'rookie',meaning:'n.新手'},
+                {word:'abactinal',meaning:'adj.无触角的'},
+                {word:'abandon',meaning:'v.抛弃放弃'},
+                {word:'meaning',meaning:'n.意思'},
+                {word:'scroll',meaning:'v.滚屏;滚动'},
+                {word:'subscribe',meaning:'v.订阅'},
+                {word:'publish',meaning:'v.出版'},
+                {word:'event',meaning:'n.事件'},
+                {word:'copyright',meaning:'n.版权,著作权'},
+                {word:'cranny',meaning:'n.裂缝,裂隙'},
+                {word:'crap',meaning:'n.废物,赌输的一注,废话vi.掷骰子'},
+                {word:'gymnastic',meaning:'adj.体操的,体育的n.训练课程'},
+                {word:'graceless',meaning:'adj.粗俗的'},
+                {word:'grad',meaning:'n.毕业生,校友'},
+                {word:'romantically',meaning:'adv.浪漫地'},
+                {word:'rompish',meaning:'adj.乱跳的,顽皮的'},
+                {word:'rookie',meaning:'n.新手'},
+                {word:'abactinal',meaning:'adj.无触角的'},
+                {word:'abandon',meaning:'v.抛弃放弃'},
+                {word:'meaning',meaning:'n.意思'},
+                {word:'scroll',meaning:'v.滚屏;滚动'},
+                {word:'subscribe',meaning:'v.订阅'},
+                {word:'publish',meaning:'v.出版'},
+                {word:'event',meaning:'n.事件'},
+                {word:'copyright',meaning:'n.版权,著作权'},
+                {word:'cranny',meaning:'n.裂缝,裂隙'},
+                {word:'crap',meaning:'n.废物,赌输的一注,废话vi.掷骰子'},
+                {word:'gymnastic',meaning:'adj.体操的,体育的n.训练课程'},
+                {word:'graceless',meaning:'adj.粗俗的'},
+                {word:'grad',meaning:'n.毕业生,校友'},
+                {word:'romantically',meaning:'adv.浪漫地'},
+                {word:'rompish',meaning:'adj.乱跳的,顽皮的'},
+                {word:'rookie',meaning:'n.新手'},
+                {word:'abactinal',meaning:'adj.无触角的'},
+                {word:'abandon',meaning:'v.抛弃放弃'},
+                {word:'meaning',meaning:'n.意思'},
+                {word:'scroll',meaning:'v.滚屏;滚动'},
+                {word:'subscribe',meaning:'v.订阅'},
+                {word:'publish',meaning:'v.出版'},
+                {word:'event',meaning:'n.事件'},
+                {word:'copyright',meaning:'n.版权,著作权'},
+                {word:'cranny',meaning:'n.裂缝,裂隙'},
+                {word:'crap',meaning:'n.废物,赌输的一注,废话vi.掷骰子'},
+                {word:'gymnastic',meaning:'adj.体操的,体育的n.训练课程'},
+                {word:'graceless',meaning:'adj.粗俗的'},
+                {word:'grad',meaning:'n.毕业生,校友'},
+                {word:'romantically',meaning:'adv.浪漫地'},
+                {word:'rompish',meaning:'adj.乱跳的,顽皮的'},
+                {word:'rookie',meaning:'n.新手'},
+            ]
+        },
+
+        mounted(){
+            this.$refs.word_list.className=this.$refs.word_list.className.replace(/\s\bisShow\b/,"")
+        }
+    })
+</script>
 </html>
-
-
-
-
