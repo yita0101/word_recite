@@ -1,10 +1,10 @@
-window.loadingRight= function () {
+window.loadingRight = function () {
     window.flag = 0
-    window.index=0
+    window.indexSpan = 1
     let input
     let right = document.querySelector(".right")
     //创建一个地图，是描绘所有span的，索引为0是它的父元素
-    window.map=[right]
+    window.map = [right]
     // word_list=document.querySelector(".word_list")
     // let e = document.querySelector("body > div > div.right > input[type=text]");
     //!todo 按delete删除
@@ -14,18 +14,17 @@ window.loadingRight= function () {
     //!todo 到最后一个不会收框
 
 
-
     right.ondblclick = function (event) {
         event = event || window.event;
 
-        event.cancelBubble=true
+        event.cancelBubble = true
 
         input = document.createElement("input")
 
         let x = event.offsetX;
         let y = event.offsetY;
 
-        newInput(x,y,right,false)
+        newInput(x, y, right, false)
 
         // input.style.position = "absolute";
         // input.type = "text";
@@ -48,8 +47,6 @@ window.loadingRight= function () {
     }
 
 
-
-
 }
 
 function onBlurInput(input) {
@@ -58,9 +55,9 @@ function onBlurInput(input) {
         if (flag == 1) {
             return;
         }
-        if (!input.value||checkedRight(input)) {
+        if (!input.value || checkedRight(input)) {
             save(input)
-        }else {
+        } else {
             input.focus()
         }
 
@@ -70,11 +67,10 @@ function onBlurInput(input) {
 function onKeyDownInput(input) {
     input.onkeypress = function (event) {
 
-
-        event.cancelBubble=true
+        event.cancelBubble = true
         // console.log(event.keyCode)
         //enter
-        if (event.keyCode == 13&&input.value) {
+        if (event.keyCode == 13 && input.value) {
             //checkedRight效验单词，这里同时也实现了，向下或向上的滑动，根据shiftKey
             if (checkedRight(input, event.shiftKey)) {
                 flag = 1;
@@ -86,44 +82,40 @@ function onKeyDownInput(input) {
                 save(input);
 
                 //在这之前要进入review模式
-                intoReviewModel()
 
-                setTimeout(function () {
-                    newInput(left, top, div, true);
-                },(temp)*TIME);
+                intoReviewModel([left, top, div, true])
+
 
                 flag = 0;
 
 
-
-
-
             } else {
-                let warn_str="输入错误，请重新输入！！！"
+                let warn_str = "输入错误，请重新输入！！！"
                 let warnDiv = document.createElement("div");
 
-                warnDiv.innerText=warn_str
+                warnDiv.innerText = warn_str
 
                 // console.log(this.offsetTop,this.offsetLeft,this)
-                warnDiv.style.left=this.offsetLeft+"px"
-                warnDiv.style.top=this.offsetTop-26+"px"
+                warnDiv.style.left = this.offsetLeft + "px"
+                warnDiv.style.top = this.offsetTop - 26 + "px"
 
-                left.addClass(warnDiv,"warn_input")
+                left.addClass(warnDiv, "warn_input")
 
                 this.parentNode.appendChild(warnDiv)
 
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.parentNode.removeChild(warnDiv)
-                },400)
+                }, 400)
             }
 
             //空格
-        }else if (event.keyCode === 32) {
+        } else if (event.keyCode === 32) {
             this.value = '';
             return false
         }
     };
 }
+
 function save(input) {
 
     let span = document.createElement("span");
@@ -136,16 +128,14 @@ function save(input) {
         span.style.left = input.style.left;
         span.style.top = input.style.top;
 
-        span.setAttribute("index",index++)
+        span.setAttribute("index", indexSpan++)
 
-        left.addClass(span,"unit")
-
+        left.addClass(span, "unit")
 
 
         map.push(span)
-        let rightDom=input.parentNode
+        let rightDom = input.parentNode
         rightDom.replaceChild(span, input);
-
 
 
         //span绑定双击事件
@@ -177,7 +167,7 @@ function save(input) {
 
         span.ondblclick = function (event) {
             // toggleClass(this,"select")
-            event.cancelBubble=true
+            event.cancelBubble = true
         };
 
         // span.onclick= function (event) {
@@ -185,7 +175,7 @@ function save(input) {
 
         span.oncontextmenu = function (event) {
 
-           let MenuDom=getMenu(event)
+            let MenuDom = getMenu(event)
 
 
             span.appendChild(MenuDom)
@@ -197,15 +187,14 @@ function save(input) {
         drag(span);
 
 
-
     } else {
         input.parentNode.removeChild(input);
     }
 }
 
-function checkedRight(input,isShift) {
+function checkedRight(input, isShift) {
     // word_list=document.querySelector(".word_list");
-    let word_list=left.word_list;
+    let word_list = left.word_list;
     // console.log(word_list)
     // console.log(word_list.current_word_index)
     // console.log(word_list.children[word_list.current_word_index].current_word_index)
@@ -214,7 +203,7 @@ function checkedRight(input,isShift) {
     //真正的比较
     if (input.value.toLowerCase() === word_list.children[word_list.current_word_index].children[0].innerText.toLowerCase()) {
         // 必要判断
-        if (word_list.current_word_index < word_list.children.length-1) {
+        if (word_list.current_word_index < word_list.children.length - 1) {
             if (isShift) {
                 left.last_word(word_list);
             } else {
@@ -230,9 +219,10 @@ function checkedRight(input,isShift) {
         return false;
     }
 }
-function drag(obj){
+
+function drag(obj) {
     //当鼠标在被拖拽元素上按下时，开始拖拽  onmousedown
-    obj.onmousedown = function(event){
+    obj.onmousedown = function (event) {
 
         //设置box1捕获所有鼠标按下的事件
         /*
@@ -254,7 +244,7 @@ function drag(obj){
 
 
         //为document绑定一个onmousemove事件
-        document.onmousemove = function(event){
+        document.onmousemove = function (event) {
             event = event || window.event;
             //当鼠标移动时被拖拽元素跟随鼠标移动 onmousemove
             //获取鼠标的坐标
@@ -262,13 +252,13 @@ function drag(obj){
             var top = event.clientY - ot;
 
             //修改box1的位置
-            obj.style.left = left+"px";
-            obj.style.top = top+"px";
+            obj.style.left = left + "px";
+            obj.style.top = top + "px";
 
         };
 
         //为document绑定一个鼠标松开事件
-        document.onmouseup = function(){
+        document.onmouseup = function () {
             //当鼠标松开时，被拖拽元素固定在当前位置  onmouseup
             //取消document的onmousemove事件
             document.onmousemove = null;
@@ -289,41 +279,139 @@ function drag(obj){
 
     };
 }
-function getRandomNum(){
+
+function getRandomNum() {
 //        map这个对象是一个数组，第一个为索引为整个装载span元素的父元素dom，存在window中
     //!todo重点重构
-    let rightDom=map[0]
+    let rightDom = map[0]
     // console.log(rightDom.clientHeight,rightDom.clientWidth)
     // console.log(rightDom.clientHeight-31,rightDom.clientWidth-150)
-    let maxH = Math.random() * (rightDom.clientHeight-31);
-    let maxW = Math.random() * (rightDom.clientWidth-150);
+    let maxH = Math.random() * (rightDom.clientHeight - 31);
+    let maxW = Math.random() * (rightDom.clientWidth - 150);
     // console.log(maxH,maxW)
-    return {maxW,maxH}
+    return {maxW, maxH}
 }
 
-function intoReviewModel(){
-     window.TIME=1000
-    for (let i = 1; i < map.length; i++) {
-        setTimeout(function () {
-            // console.log(i)
-            left.removeClass(map[i-1],"review_word")
-            left.addClass(map[i],"review_word")
-            // document.onkeypress = function (event) {
-            //     console.log(event)
-            //     if (event.keyCode === 32) {
-            //         left.removeClass(map[i],"review_word")
-            //         if (map[i + 1]) {
-            //             left.addClass(map[i+1],"review_word");
-            //         }
-            //         return false
-            //     }
-            // };
-        },(i-1)*TIME);
-        window.temp=i
-    }
+function intoReviewModel(position) {
+    window.TIME = 1000
+    window.index = 1
+    let tempIndex1
+    left.addClass(map[index++], "review_word")
+    document.onkeypress = function (event) {
+        if (event.keyCode === 32) {
+            left.removeClass(map[index - 1], "review_word");
+
+            tempIndex1 = index
+            left.addClass(map[index++], "review_word");
+            window["hasOnKey" + tempIndex1] = true
+            console.log(111)
+            review(index, --index, position)
+
+            return false;
+        }
+    };
+
     setTimeout(function () {
-        left.removeClass(map[temp],"review_word")
-    },(temp)*TIME);
+        if (!window["hasOnKey" + tempIndex1]) {
+            left.removeClass(map[index - 1], "review_word");
+            left.addClass(map[index++], "review_word");
+
+            review(index, --index, position)
+
+
+        }
+
+    }, TIME);
+
+
+}
+
+function review(index, tempIndex2, position) {
+    if (map.length ===2) {
+        newInput(position[0], position[1], position[2], position[3])
+        return
+    }
+    document.onkeypress = function (event) {
+        if (event.keyCode === 32) {
+            left.removeClass(map[index - 1], "review_word")
+            tempIndex2 = index
+            window["hasOnKey" + tempIndex2] = true
+            left.addClass(map[index++], "review_word")
+
+
+            if (index < map.length) {
+                review(index, index--, position);
+            } else {
+                let tempIndex3
+                document.onkeypress = function (event) {
+                    if (event.keyCode === 32) {
+                        left.removeClass(map[index - 1], "review_word");
+
+                        tempIndex3 = index
+                        left.addClass(map[index], "review_word");
+                        window["hasOnKey" + tempIndex3] = true
+
+                        newInput(position[0], position[1], position[2], position[3])
+                        return false;
+                    }
+                };
+
+                setTimeout(function () {
+                    if (!window["hasOnKey" + tempIndex3]) {
+                        left.removeClass(map[index - 1], "review_word");
+                        left.addClass(map[index], "review_word");
+
+                        newInput(position[0], position[1], position[2], position[3])
+                    }
+
+                }, TIME);
+
+            }
+            return false;
+        }
+    };
+
+    setTimeout(function () {
+        if (!window["hasOnKey" + tempIndex2]) {
+
+            left.removeClass(map[index - 1], "review_word");
+            left.addClass(map[index++], "review_word")
+
+            if (index < map.length) {
+                review(index, index--, position);
+            } else {
+
+                let tempIndex3
+                document.onkeypress = function (event) {
+                    if (event.keyCode === 32) {
+                        left.removeClass(map[index - 1], "review_word");
+
+                        tempIndex3 = index
+                        left.addClass(map[index], "review_word");
+                        window["hasOnKey" + tempIndex3] = true
+
+                        newInput(position[0], position[1], position[2], position[3])
+                        return false;
+                    }
+                };
+
+                setTimeout(function () {
+                    if (!window["hasOnKey" + tempIndex3]) {
+                        left.removeClass(map[index - 1], "review_word");
+                        left.addClass(map[index], "review_word");
+
+                        newInput(position[0], position[1], position[2], position[3])
+
+
+                    }
+
+                }, TIME);
+
+            }
+        }
+
+    }, TIME);
+
 }
 
 /**
@@ -335,25 +423,25 @@ function intoReviewModel(){
  * @param hasLast 是否有上一个元素，有就会根据上一个元素发生偏移
  */
 
-function newInput(left,top,parentNode,hasLast){
+function newInput(left, top, parentNode, hasLast) {
     // console.log(left,top)
 
     let newInput = document.createElement("input");
 
     let offsetLeft;
     // let offsetTop =offsetLeft= Math.random();
-    let offsetTop =offsetLeft=40;
+    let offsetTop = offsetLeft = 40;
     newInput.type = "text";
     newInput.style.position = "absolute";
 
     if (hasLast) {
-        let offset=getRandomNum()
-        newInput.style.left = ( offset.maxW) + "px";
-        newInput.style.top = ( offset.maxH) + "px";
+        let offset = getRandomNum()
+        newInput.style.left = (offset.maxW) + "px";
+        newInput.style.top = (offset.maxH) + "px";
 
     } else {
-        newInput.style.left = (left ) + "px";
-        newInput.style.top = (top ) + "px";
+        newInput.style.left = (left) + "px";
+        newInput.style.top = (top) + "px";
     }
 
 
@@ -365,16 +453,18 @@ function newInput(left,top,parentNode,hasLast){
 
     newInput.focus();
 }
-function deleteUnit(){
+
+function deleteUnit() {
 
 }
-function getMenu(eventParent){
+
+function getMenu(eventParent) {
     // console.log(event)
     // console.log(event.offsetX,event.offsetY)
     // console.log(event.clientX,event.clientY)
     if (!window.menuRightClick) {
 
-         Menu_dom = document.createElement("div");
+        Menu_dom = document.createElement("div");
 
 
         Menu_dom.style.position = "absolute";
@@ -386,10 +476,11 @@ function getMenu(eventParent){
         selectMenuDom.innerText = "删除";
 
         selectMenuDom.onclick = function (event) {
-
             // console.log(eventParent.srcElement.getAttribute("index"),eventParent.srcElement)
             // console.log(eventParent.srcElement.parentNode, eventParent.srcElement)
             eventParent.srcElement.parentNode.removeChild(eventParent.srcElement)
+            let current_index=eventParent.srcElement.getAttribute("index")
+            map.splice(parseInt(current_index),1)
         };
 
         selectMenuDom.onmouseleave = function (event) {
@@ -398,7 +489,7 @@ function getMenu(eventParent){
 
         Menu_dom.appendChild(selectMenuDom);
 
-        left.addClass(selectMenuDom,"menu_select")
+        left.addClass(selectMenuDom, "menu_select")
         left.addClass(Menu_dom, "menu_right_click");
 
         // event.clientX
@@ -412,21 +503,25 @@ function getMenu(eventParent){
             // console.log(eventParent.srcElement.getAttribute("index"),eventParent.srcElement)
             // console.log(eventParent.srcElement.parentNode, eventParent.srcElement)
             eventParent.srcElement.parentNode.removeChild(eventParent.srcElement)
+            let current_index=eventParent.srcElement.getAttribute("index")
+            map.splice(parseInt(current_index),1)
         };
         menuRightClick.children[0].onmouseleave = function (event) {
             menuRightClick.parentNode.removeChild(menuRightClick)
+
         };
     }
-        return window.menuRightClick;
+    return window.menuRightClick;
 }
 
-function sleep(milliSeconds){
-    let StartTime =new Date().getTime();
+function sleep(milliSeconds) {
+    let StartTime = new Date().getTime();
     let i = 0;
-    while (new Date().getTime() <StartTime+milliSeconds){
+    while (new Date().getTime() < StartTime + milliSeconds) {
         if (window.isCancalSleep) {
             break;
         }
-    };
+    }
+    ;
 
 }

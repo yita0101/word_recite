@@ -70,7 +70,7 @@ window.loadingLeft = function () {
  * @param cn 删除的类名
  */
 function removeClass(obj,cn){
-    if (hasClass(obj, cn)) {
+    if (obj&&hasClass(obj, cn)) {
         let regExp = new RegExp("\\s\\b"+cn+"\\b");
 
         obj.className=obj.className.replace(regExp,"")
@@ -79,7 +79,9 @@ function removeClass(obj,cn){
 }
 
 function addClass(obj, cn) {
+    if (obj&&!hasClass(obj, cn)) {
         obj.className+=" "+cn;
+    }
 }
 
 function hasClass(obj, cn) {
