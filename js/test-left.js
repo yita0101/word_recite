@@ -1,8 +1,20 @@
 window.loadingLeft = function () {
 
+
+
     let left = document.querySelector(".left");
+    let right = document.querySelector(".right")
+    //根据视口设置left和right container的大小
+    left.style.height=right.style.height=window.innerHeight+"px"
+
+
+    //当浏览器改变时调整
+    window.onresize = function () {
+        left.style.height=right.style.height=window.innerHeight+"px"
+    };
+
     let word_list = document.querySelector(".word_list");
-    window.left={last_word,next_word,addClass,word_list,toggleClass,removeClass}
+    window.left={last_word,next_word,addClass,word_list,toggleClass,removeClass,playAudio}
     word_list.current_word_index=0
 
     left.addEventListener("wheel", function (event) {
@@ -19,6 +31,21 @@ window.loadingLeft = function () {
         event.preventDefault();
     });
 
+    let words = document.querySelectorAll(".word");
+    words = Array.prototype.slice.call(words);
+    for (let word of words) {
+        word.onclick = function (event) {
+                playAudio(this.innerText)
+        };
+    }
+
+function playAudio(word_str){
+    let audioWord = document.querySelector("#audioWord");
+    let autio_url=`https://dict.youdao.com/dictvoice?audio=${word_str}&type=2`
+    audioWord.setAttribute("src",autio_url)
+    audioWord.load()
+    audioWord.play()
+}
     /**
      * 滑动到上一个单词
      * @param word_list 操作的对象，是整一个单词表

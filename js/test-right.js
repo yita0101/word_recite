@@ -1,13 +1,18 @@
 window.loadingRight = function () {
+    //在输入单词正确后按下enter时会触发失去焦点事件，但按键事件先执行
+    // 由于js是单线程的所以按键事件执行了一半并被中断了,会出现bug但忘了!todo
+    //flag记录按照事件是否在执行,0表示不在，1表示在
     window.flag = 0
+    //每添加一个单词span，就会为这个span添加一个索引
     window.indexSpan = 1
     let input
     let right = document.querySelector(".right")
-    //创建一个地图，是描绘所有span的，索引为0是它的父元素
+
+    right.style.height=window.innerHeight+"px"
+    //存放所有的span，索引为0是他们的父元素
     window.map = [right]
     window.right={}
-    // word_list=document.querySelector(".word_list")
-    // let e = document.querySelector("body > div > div.right > input[type=text]");
+
     //!todo 按delete删除
     //!todo 不能移过规定区域
     //!todo 数据展示
@@ -16,7 +21,6 @@ window.loadingRight = function () {
 
 
     right.ondblclick = function (event) {
-        event = event || window.event;
 
         event.cancelBubble = true
 
@@ -25,25 +29,9 @@ window.loadingRight = function () {
         let x = event.offsetX;
         let y = event.offsetY;
 
-        newInput(x, y, right, false)
+        newInput(x, y, right, true)
 
-        // input.style.position = "absolute";
-        // input.type = "text";
-        //
-        //
-        // input.style.left = x + "px";
-        // input.style.top = y + "px";
-        //
-        // right.appendChild(input);
-        //
-        // input.focus();
-        //
-        //
-        // //对input失去焦点绑定
-        // onBlurInput(input);
-        //
-        // //对input键盘按下绑定,会同时执行鼠标事件的同时会触发失去焦点事件
-        // onKeyDownInput(input);
+
 
     }
 
@@ -52,8 +40,11 @@ window.loadingRight = function () {
 
 function onBlurInput(input) {
     input.onblur = function () {
+        //在输入单词正确后按下enter时会触发失去焦点事件，但按键事件先执行
+        // 由于js是单线程的所以按键事件执行了一半并被中断了,会出现bug但忘了!todo
         // console.log(1);
-        if (flag == 1) {
+        //
+        if (flag === 1) {
             return;
         }
         if (!input.value || checkedRight(input)) {
@@ -70,8 +61,8 @@ function onKeyDownInput(input) {
 
         event.cancelBubble = true
         // console.log(event.keyCode)
-        //enter
-        if (event.keyCode == 13 && input.value) {
+        //enter input中不为空
+        if (event.keyCode === 13 && input.value) {
             //checkedRight效验单词，这里同时也实现了，向下或向上的滑动，根据shiftKey
             if (checkedRight(input, event.shiftKey)) {
                 flag = 1;
@@ -80,11 +71,12 @@ function onKeyDownInput(input) {
                 let top = input.offsetTop;
 
                 //在这里移除了input所以不能获取它的parentNode了，同时定位的偏移量也没有了
+                //这是将输入框中的单词变成模块span
                 save(input);
 
                 //在这之前要进入review模式
-
-                intoReviewModel([left, top, div, true])
+                //传入position是最后要调用一个函数然后用的参数。。。
+                intoReviewModel([left, top, div, false])
 
 
                 flag = 0;
@@ -139,32 +131,7 @@ function save(input) {
         rightDom.replaceChild(span, input);
 
 
-        //span绑定双击事件
-        // span.ondblclick = function (event) {
-        //
-        //     event = event || window.event;
-        //
-        //     let newInput = document.createElement("input")
-        //     newInput.type = "text";
-        //     newInput.style.position = "absolute";
-        //     newInput.style.left = span.style.left;
-        //     newInput.style.top = span.style.top;
-        //     newInput.value = span.innerText;
-        //
-        //     span.parentNode.appendChild(newInput);
-        //
-        //     onBlurInput(newInput);
-        //
-        //     onKeyDownInput(newInput);
-        //
-        //
-        //     span.parentNode.replaceChild(newInput,span);
-        //
-        //
-        //
-        //     newInput.focus();
-        //     event ? event.cancelBubble = true : event.stopPropagation();
-        // }
+
 
         span.ondblclick = function (event) {
             // toggleClass(this,"select")
@@ -173,7 +140,7 @@ function save(input) {
 
         // span.onclick= function (event) {
         // };
-
+        //绑定右击菜单，实现了删除功能
         span.oncontextmenu = function (event) {
 
             let MenuDom = getMenu(event)
@@ -186,6 +153,7 @@ function save(input) {
 
         //对span拖拽实现
         drag(span);
+
 
 
     } else {
@@ -204,6 +172,7 @@ function checkedRight(input, isShift) {
     //真正的比较
     if (input.value.toLowerCase() === word_list.children[word_list.current_word_index].children[0].innerText.toLowerCase()) {
         // 必要判断
+        //如果按下shift往上移动单词
         if (word_list.current_word_index < word_list.children.length - 1) {
             if (isShift) {
                 left.last_word(word_list);
@@ -216,7 +185,7 @@ function checkedRight(input, isShift) {
     } else {
 
         // alert("输入匹配，请重新输入")
-        //!TODO如果使用alert会循环调用本身，不知道什么原因同时也不推荐使用这种方式
+        //!todo如果使用alert会循环调用本身，不知道什么原因同时也不推荐使用这种方式
         return false;
     }
 }
@@ -289,40 +258,41 @@ function getRandomNum() {
     // console.log(rightDom.clientHeight-31,rightDom.clientWidth-150)
     let inputWidth=150
     // let inputHeight=31
+
     let maxW=rightDom.clientWidth - inputWidth
     let maxH=rightDom.clientHeight - map[1].clientHeight
     let randomW = Math.random() * (maxW);
     let randomH = Math.random() * (maxH);
+
     // console.log(maxH,maxW)
 
-    // let count=0
 
     let countCondition='false'
     for (let i = 1; i <map.length; i++) {
         //这里的变量写多了，不想改了。。。
 
-        right["leftDot"+i]=map[i].offsetLeft-inputWidth<0?0:map[i].offsetLeft-inputWidth
+        let leftDot=map[i].offsetLeft-inputWidth<0?0:map[i].offsetLeft-inputWidth
 
-        right["topDot"+i]=map[i].offsetTop-map[i].clientHeight<0?0:map[i].offsetTop-map[i].clientHeight
-        // console.log(right["topDot"+i])
+        let topDot=map[i].offsetTop-map[i].clientHeight<0?0:map[i].offsetTop-map[i].clientHeight
+        // console.log(topDot)
 
-        right["borderW"+i]=right["leftDot"+i]===0?map[i].offsetLeft+map[i].clientWidth:right["leftDot"+i]+map[i].clientWidth+inputWidth
+        let borderW=leftDot===0?map[i].offsetLeft+map[i].clientWidth:leftDot+map[i].clientWidth+inputWidth
 
-        right["borderW"+i]=right["borderW"+i]>maxW?maxW:right["borderW"+i]
+        borderW=borderW>maxW?maxW:borderW
 
-        right["borderH"+i]=right["topDot"+i]===0?map[i].offsetTop+map[i].clientHeight:right["topDot"+i]+map[i].clientHeight*2
-        // console.log(right["borderH"+i])
+        let borderH=topDot===0?map[i].offsetTop+map[i].clientHeight:topDot+map[i].clientHeight*2
+        // console.log(borderH)
 
-        right["borderH"+i]=right["borderH"+i]>maxH?maxH:right["borderH"+i]
+        borderH=borderH>maxH?maxH:borderH
 
-        // console.log(right["borderH"+i])
+        // console.log(borderH)
 
-        countCondition+="||"+`randomW > ${right["leftDot"+i]} && randomW < ${(right["borderW"+i])} && randomH >${right["topDot"+i]} && randomH < ${(right["borderH"+i])}`
+        countCondition+="||"+`randomW > ${leftDot} && randomW < ${(borderW)} && randomH >${topDot} && randomH < ${(borderH)}`
 
     }
     // console.log(countCondition)
     let count=0
-    console.time("test")
+    // console.time("test")
     while (eval(countCondition)) {
         if (++count>2222) {
             console.log('无空位')
@@ -333,26 +303,34 @@ function getRandomNum() {
         randomW = Math.random() * (maxW);
         randomH = Math.random() * (maxH);
     }
-    console.timeEnd("test")
-    console.log(count)
+    // console.timeEnd("test")
+    // console.log(count)
     // console.log(eval(countCondition),randomW,randomH)
     return {randomW, randomH};
 }
 
 
-
+//由于单线程，所以只能以事件和延时的方式推进执行
 function intoReviewModel(position) {
-    window.TIME = 1000
+    window.TIME = 2000
     window.index = 1
     let tempIndex1
+
+    left.playAudio(map[index].innerText)
+
     left.addClass(map[index++], "review_word")
     document.onkeypress = function (event) {
         if (event.keyCode === 32) {
             left.removeClass(map[index - 1], "review_word");
 
             tempIndex1 = index
+
+
+            map[index]&&left.playAudio(map[index].innerText)
+
             left.addClass(map[index++], "review_word");
             window["hasOnKey" + tempIndex1] = true
+
 
             review(index, index, position)
 
@@ -362,7 +340,12 @@ function intoReviewModel(position) {
 
     setTimeout(function () {
         if (!window["hasOnKey" + tempIndex1]) {
+
             left.removeClass(map[index - 1], "review_word");
+
+
+            map[index]&&left.playAudio(map[index].innerText)
+
             left.addClass(map[index++], "review_word");
 
             review(index,index, position)
@@ -388,6 +371,7 @@ function review(index, tempIndex2, position) {
             // console.log(22222,tempIndex2)
             window["hasOnKey" + tempIndex2] = true
 
+            map[index]&&left.playAudio(map[index].innerText)
             // console.log(111,window["hasOnKey" + tempIndex2],"hasOnKey" + tempIndex2)
 
             left.addClass(map[index++], "review_word")
@@ -401,6 +385,7 @@ function review(index, tempIndex2, position) {
                         left.removeClass(map[index - 1], "review_word");
 
                         tempIndex3 = index
+                        map[index]&&left.playAudio(map[index].innerText)
                         left.addClass(map[index], "review_word");
                         window["hasOnKey" + tempIndex3] = true
 
@@ -413,6 +398,9 @@ function review(index, tempIndex2, position) {
                     if (!window["hasOnKey" + tempIndex3]) {
                         window["hasOnKey" + tempIndex3]=null
                         left.removeClass(map[index - 1], "review_word");
+
+                        map[index]&&left.playAudio(map[index].innerText)
+
                         left.addClass(map[index], "review_word");
 
                         newInput(position[0], position[1], position[2], position[3])
@@ -429,6 +417,10 @@ function review(index, tempIndex2, position) {
         if (!window["hasOnKey" + tempIndex2]) {
 
             left.removeClass(map[index - 1], "review_word");
+
+            console.log(map[index])
+            map[index]&&left.playAudio(map[index].innerText)
+
             left.addClass(map[index++], "review_word")
 
             if (index < map.length) {
@@ -441,6 +433,9 @@ function review(index, tempIndex2, position) {
                         left.removeClass(map[index - 1], "review_word");
 
                         tempIndex3 = index
+
+                        left.playAudio(map[index].innerText)
+
                         left.addClass(map[index], "review_word");
                         // console.log(3333,tempIndex3)
                         window["hasOnKey" + tempIndex3] = true
@@ -456,6 +451,8 @@ function review(index, tempIndex2, position) {
                     if (!window["hasOnKey" + tempIndex3]) {
 
                         left.removeClass(map[index - 1], "review_word");
+
+                        map[index]&&left.playAudio(map[index].innerText)
                         left.addClass(map[index], "review_word");
 
                         newInput(position[0], position[1], position[2], position[3])
@@ -475,41 +472,57 @@ function review(index, tempIndex2, position) {
 /**
  * 根据偏移量创建新的input
  * !!!请确保parentNode开启了定位
- * @param left 相对于最近开启定位的祖元素的左边偏移量
- * @param top  相对于最近开启定位的祖元素的右边偏移量
+ * @param left 鼠标相对于最近开启定位的祖元素的左边偏移量,
+ * @param top  鼠标相对于最近开启定位的祖元素的右边偏移量
  * @param parentNode 那个祖元素元素
- * @param hasLast 是否有上一个元素，有就会根据上一个元素发生偏移
+ * @param isFirstWord 是否是输入的第一个单词
  */
 
-function newInput(left, top, parentNode, hasLast) {
+function newInput(left, top, parentNode, isFirstWord) {
     // console.log(left,top)
+    let isHasInput = document.getElementsByTagName("input");
+    //如果没有input。。。执行
+    if (!isHasInput.length) {
+        let newInput = document.createElement("input");
 
-    let newInput = document.createElement("input");
+        // let offsetLeft;
+        // let offsetTop =offsetLeft= Math.random();
+        // let offsetTop = offsetLeft = 40;
+        newInput.type = "text";
+        newInput.style.position = "absolute";
 
-    let offsetLeft;
-    // let offsetTop =offsetLeft= Math.random();
-    let offsetTop = offsetLeft = 40;
-    newInput.type = "text";
-    newInput.style.position = "absolute";
+        //如果不是第一个单词
+        if (!isFirstWord) {
+            //获取下一个位置，在空位满足的情况下不与其他的重合
+            let offset = getRandomNum();
+            newInput.style.left = (offset.randomW) + "px";
+            newInput.style.top = (offset.randomH) + "px";
 
-    if (hasLast) {
-        let offset = getRandomNum()
-        newInput.style.left = (offset.randomW) + "px";
-        newInput.style.top = (offset.randomH) + "px";
+        } else {
 
-    } else {
-        newInput.style.left = (left) + "px";
-        newInput.style.top = (top) + "px";
+            newInput.style.left = (left) + "px";
+            newInput.style.top = (top) + "px";
+        }
+
+        //绑定失去焦点事件
+        onBlurInput(newInput);
+
+        //绑定键盘按键事件
+        onKeyDownInput(newInput);
+
+        parentNode.appendChild(newInput);
+
+        newInput.focus();
+
+        //创建输入框马上播放音频
+        window.left.playAudio(document.querySelector(".recite>.word").innerText)
+    }else {
+        alert("请将当前输入框取消")
     }
 
 
-    onBlurInput(newInput);
 
-    onKeyDownInput(newInput);
 
-    parentNode.appendChild(newInput);
-
-    newInput.focus();
 }
 
 function deleteUnit() {
@@ -570,16 +583,4 @@ function getMenu(eventParent) {
         };
     }
     return window.menuRightClick;
-}
-
-function sleep(milliSeconds) {
-    let StartTime = new Date().getTime();
-    let i = 0;
-    while (new Date().getTime() < StartTime + milliSeconds) {
-        if (window.isCancalSleep) {
-            break;
-        }
-    }
-    ;
-
 }
