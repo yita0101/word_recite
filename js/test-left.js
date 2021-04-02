@@ -2,7 +2,7 @@ window.loadingLeft = function () {
 
     let left = document.querySelector(".left");
     let word_list = document.querySelector(".word_list");
-    window.left={last_word,next_word,addClass,word_list}
+    window.left={last_word,next_word,addClass,word_list,toggleClass,removeClass}
     word_list.current_word_index=0
 
     left.addEventListener("wheel", function (event) {
@@ -70,12 +70,27 @@ window.loadingLeft = function () {
  * @param cn 删除的类名
  */
 function removeClass(obj,cn){
-    let regExp = new RegExp("\\s\\b"+cn+"\\b");
+    if (hasClass(obj, cn)) {
+        let regExp = new RegExp("\\s\\b"+cn+"\\b");
 
-    obj.className=obj.className.replace(regExp,"")
+        obj.className=obj.className.replace(regExp,"")
+    }
+
 }
 
 function addClass(obj, cn) {
+        obj.className+=" "+cn;
+}
 
-    obj.className+=" "+cn
+function hasClass(obj, cn) {
+    let regExp = new RegExp("\\s\\b"+cn+"\\b");
+    return regExp.test(obj.className)
+}
+
+function toggleClass(obj,cn) {
+    if (hasClass(obj, cn)) {
+        removeClass(obj, cn);
+    } else {
+        addClass(obj,cn)
+    }
 }

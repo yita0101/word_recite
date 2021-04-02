@@ -1,5 +1,6 @@
 window.loadingRight= function () {
     window.flag = 0
+    window.index=0
     let input
     let right = document.querySelector(".right")
     //创建一个地图，是描绘所有span的，索引为0是它的父元素
@@ -68,21 +69,58 @@ function onBlurInput(input) {
 
 function onKeyDownInput(input) {
     input.onkeypress = function (event) {
-        //checkedRight这里同时也实现了，向下或向上的滑动，根据shiftKey
-        if (event.keyCode == 13&&input.value&&checkedRight(input,event.shiftKey)) {
-            // console.log(2);
-            flag = 1;
-            let div = input.parentNode;
-            let left = input.offsetLeft;
-            let top = input.offsetTop;
 
-            //在这里移除了input所以不能获取它的parentNode了，同时定位的偏移量也没有了
-            save(input);
 
-            newInput(left,top,div,true)
+        event.cancelBubble=true
+        // console.log(event.keyCode)
+        //enter
+        if (event.keyCode == 13&&input.value) {
+            //checkedRight效验单词，这里同时也实现了，向下或向上的滑动，根据shiftKey
+            if (checkedRight(input, event.shiftKey)) {
+                flag = 1;
+                let div = input.parentNode;
+                let left = input.offsetLeft;
+                let top = input.offsetTop;
 
-            // console.log(4)
-            flag = 0;
+                //在这里移除了input所以不能获取它的parentNode了，同时定位的偏移量也没有了
+                save(input);
+
+                //在这之前要进入review模式
+                intoReviewModel()
+
+                setTimeout(function () {
+                    newInput(left, top, div, true);
+                },(temp)*TIME);
+
+                flag = 0;
+
+
+
+
+
+            } else {
+                let warn_str="输入错误，请重新输入！！！"
+                let warnDiv = document.createElement("div");
+
+                warnDiv.innerText=warn_str
+
+                // console.log(this.offsetTop,this.offsetLeft,this)
+                warnDiv.style.left=this.offsetLeft+"px"
+                warnDiv.style.top=this.offsetTop-26+"px"
+
+                left.addClass(warnDiv,"warn_input")
+
+                this.parentNode.appendChild(warnDiv)
+
+                setTimeout(()=>{
+                    this.parentNode.removeChild(warnDiv)
+                },400)
+            }
+
+            //空格
+        }else if (event.keyCode === 32) {
+            this.value = '';
+            return false
         }
     };
 }
@@ -98,12 +136,15 @@ function save(input) {
         span.style.left = input.style.left;
         span.style.top = input.style.top;
 
+        span.setAttribute("index",index++)
 
         left.addClass(span,"unit")
 
-        map.push(span)
 
-        input.parentNode.replaceChild(span, input);
+
+        map.push(span)
+        let rightDom=input.parentNode
+        rightDom.replaceChild(span, input);
 
 
 
@@ -135,10 +176,22 @@ function save(input) {
         // }
 
         span.ondblclick = function (event) {
+            // toggleClass(this,"select")
             event.cancelBubble=true
         };
 
+        // span.onclick= function (event) {
+        // };
 
+        span.oncontextmenu = function (event) {
+
+           let MenuDom=getMenu(event)
+
+
+            span.appendChild(MenuDom)
+
+            return false
+        };
 
         //对span拖拽实现
         drag(span);
@@ -238,10 +291,39 @@ function drag(obj){
 }
 function getRandomNum(){
 //        map这个对象是一个数组，第一个为索引为整个装载span元素的父元素dom，存在window中
+    //!todo重点重构
+    let rightDom=map[0]
+    // console.log(rightDom.clientHeight,rightDom.clientWidth)
+    // console.log(rightDom.clientHeight-31,rightDom.clientWidth-150)
+    let maxH = Math.random() * (rightDom.clientHeight-31);
+    let maxW = Math.random() * (rightDom.clientWidth-150);
+    // console.log(maxH,maxW)
+    return {maxW,maxH}
 }
 
-function reviewWord(){
-
+function intoReviewModel(){
+     window.TIME=1000
+    for (let i = 1; i < map.length; i++) {
+        setTimeout(function () {
+            // console.log(i)
+            left.removeClass(map[i-1],"review_word")
+            left.addClass(map[i],"review_word")
+            // document.onkeypress = function (event) {
+            //     console.log(event)
+            //     if (event.keyCode === 32) {
+            //         left.removeClass(map[i],"review_word")
+            //         if (map[i + 1]) {
+            //             left.addClass(map[i+1],"review_word");
+            //         }
+            //         return false
+            //     }
+            // };
+        },(i-1)*TIME);
+        window.temp=i
+    }
+    setTimeout(function () {
+        left.removeClass(map[temp],"review_word")
+    },(temp)*TIME);
 }
 
 /**
@@ -265,8 +347,10 @@ function newInput(left,top,parentNode,hasLast){
     newInput.style.position = "absolute";
 
     if (hasLast) {
-        newInput.style.left = (left + offsetLeft) + "px";
-        newInput.style.top = (top + offsetTop) + "px";
+        let offset=getRandomNum()
+        newInput.style.left = ( offset.maxW) + "px";
+        newInput.style.top = ( offset.maxH) + "px";
+
     } else {
         newInput.style.left = (left ) + "px";
         newInput.style.top = (top ) + "px";
@@ -280,4 +364,69 @@ function newInput(left,top,parentNode,hasLast){
     parentNode.appendChild(newInput);
 
     newInput.focus();
+}
+function deleteUnit(){
+
+}
+function getMenu(eventParent){
+    // console.log(event)
+    // console.log(event.offsetX,event.offsetY)
+    // console.log(event.clientX,event.clientY)
+    if (!window.menuRightClick) {
+
+         Menu_dom = document.createElement("div");
+
+
+        Menu_dom.style.position = "absolute";
+        Menu_dom.style.left = eventParent.offsetX + "px";
+        Menu_dom.style.top = eventParent.offsetY + "px";
+
+        let selectMenuDom = document.createElement("div");
+
+        selectMenuDom.innerText = "删除";
+
+        selectMenuDom.onclick = function (event) {
+
+            // console.log(eventParent.srcElement.getAttribute("index"),eventParent.srcElement)
+            // console.log(eventParent.srcElement.parentNode, eventParent.srcElement)
+            eventParent.srcElement.parentNode.removeChild(eventParent.srcElement)
+        };
+
+        selectMenuDom.onmouseleave = function (event) {
+            Menu_dom.parentNode.removeChild(Menu_dom)
+        };
+
+        Menu_dom.appendChild(selectMenuDom);
+
+        left.addClass(selectMenuDom,"menu_select")
+        left.addClass(Menu_dom, "menu_right_click");
+
+        // event.clientX
+        window.menuRightClick = Menu_dom;
+    } else {
+
+        menuRightClick.style.left = eventParent.offsetX + "px";
+        menuRightClick.style.top = eventParent.offsetY + "px";
+        menuRightClick.children[0].onclick = function (event) {
+
+            // console.log(eventParent.srcElement.getAttribute("index"),eventParent.srcElement)
+            // console.log(eventParent.srcElement.parentNode, eventParent.srcElement)
+            eventParent.srcElement.parentNode.removeChild(eventParent.srcElement)
+        };
+        menuRightClick.children[0].onmouseleave = function (event) {
+            menuRightClick.parentNode.removeChild(menuRightClick)
+        };
+    }
+        return window.menuRightClick;
+}
+
+function sleep(milliSeconds){
+    let StartTime =new Date().getTime();
+    let i = 0;
+    while (new Date().getTime() <StartTime+milliSeconds){
+        if (window.isCancalSleep) {
+            break;
+        }
+    };
+
 }

@@ -44,6 +44,7 @@
 .unit{
     background-color: #A4B0F5;
     font-size: 20pt;
+    padding: 5px;
 }
 
 .recite{
@@ -63,6 +64,7 @@
 input{
     width: 150px;
     font-size: 20pt;
+
 }
 
 /*取消双击选中文字*/
@@ -73,5 +75,31 @@ span,div{
     -khtml-user-select:none;/*早期浏览器*/
     user-select:none;
 }
+.select{
+    padding: 0;
+    border: 5px solid red;
+}
 
+.menu_right_click{
+    height: 26px;
+    width: 46px;
+    font-size: 15pt;
+    background-color: #84E6F8;
+}
 
+.menu_select {
+    margin: 0 auto;
+    text-align: center;
+    line-height:26px ;
+}
+
+.warn_input{
+    position: absolute;
+    font-size: 15pt;
+    color: #d00000;
+}
+.review_word{
+    padding: 0;
+    border: 5px solid red;
+    z-index: 999;
+}
