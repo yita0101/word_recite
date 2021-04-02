@@ -15,7 +15,7 @@
    <div class="wrapper">
        <div class="left" >
            <ul class="word_list isShow" ref="word_list">
-               <li v-for="(item,index) in word_list" :key="index" :class="{word_wrapper:true,recite:index===0}">
+               <li v-for="(item,index) in word_list" :key="index" :class="{word_wrapper:true,recite:index===0}" :listIndex="index">
                     <div class="word" >{{item.word}}</div>
                    <div class="meaning"  >{{item.meaning}}</div>
                </li>

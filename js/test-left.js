@@ -32,13 +32,21 @@ window.loadingLeft = function () {
         event.preventDefault();
     });
 
-    let words = document.querySelectorAll(".word");
-    words = Array.prototype.slice.call(words);
-    for (let word of words) {
-        word.onclick = function (event) {
-                playAudio(this.innerText)
-        };
-    }
+    //利用事件冒泡的机制,只绑定一个对象即可
+    let wordList = document.querySelector(".word_list");
+    wordList.onclick = function (event) {
+        let wordDom=event.target
+        if (hasClass(event.target, "word")) {
+            playAudio(wordDom.innerText)
+        }
+    };
+    // let words = document.querySelectorAll(".word");
+    // for (let word of words) {
+    //     word.onclick = function (event) {
+    //         console.log(this.innerText)
+    //             // playAudio(this.innerText)
+    //     };
+    // }
 
 function playAudio(word_str){
     let audioWord = document.querySelector("#audioWord");
@@ -54,9 +62,12 @@ function playAudio(word_str){
      */
     function last_word(word_list){
         if (word_list.current_word_index >0) {
+            //
 
             let recite_word = word_list.children[word_list.current_word_index--];
             removeClass(recite_word,'recite');
+            // addClass(recite_word,'last_recite')
+
 
             //这里不能换成recite_word,current_word_index不是一个
             addClass(word_list.children[word_list.current_word_index],'recite')
@@ -113,8 +124,9 @@ function addClass(obj, cn) {
 }
 
 function hasClass(obj, cn) {
-    let regExp = new RegExp("\\s\\b"+cn+"\\b");
-    return regExp.test(obj.className)
+    let regExp1 = new RegExp("\\s\\b"+cn+"\\b");
+    let regExp2=new RegExp("^"+cn+"$");
+    return regExp1.test(obj.className)||regExp2.test(obj.className)
 }
 
 function toggleClass(obj,cn) {

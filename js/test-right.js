@@ -15,10 +15,8 @@ window.loadingRight = function () {
 
     //!todo 按delete删除
     //!todo 不能移过规定区域
-    //!todo 按键与指定单词监听
-    //!todo 鼠标移出，如果输入错误提示
-    //!todo 输入框失去焦点，播放一次音标
-    //!todo
+    //!todo 单词是recite的单词显示中文，其他的显示音标
+    //!todo -list 后端那一套包括数据，大概要3___0天吧。。。
     right.ondblclick = function (event) {
 
         event.cancelBubble = true
@@ -33,6 +31,23 @@ window.loadingRight = function () {
 
 
     }
+    //shift+空格下一个单词
+    //在复习模式中按空格可以切换单词，shift空格键中文提示
+    document.addEventListener('keypress',function (event) {
+
+        if (event.shiftKey && event.keyCode === 32) {
+            let reviewWordDom = document.querySelector(".review_word");
+            //根据右边span每次设置的listIndex获取对应左边的单词
+            if (reviewWordDom) {
+                let meaningMsg=left.word_list.children[reviewWordDom.getAttribute("listIndex")].querySelector(".meaning").innerText;
+                alert_msg(meaningMsg,reviewWordDom,false)
+            }
+        }
+
+        //阻止空格默认事件，双重保险
+        event.preventDefault();
+        return false
+    },);
 
 
 }
@@ -47,6 +62,8 @@ function onBlurInput(input) {
             return;
         }
         if (!input.value || checkedRight(input)) {
+            //!toThink 输入框失去焦点，播放一次音标,考虑
+            // window.left.playAudio(document.querySelector(".recite>.word").innerText)
             save(input)
         } else {
             input.focus()
@@ -71,7 +88,7 @@ function onKeyDownInput(input) {
 
                 //在这里移除了input所以不能获取它的parentNode了，同时定位的偏移量也没有了
                 //这是将输入框中的单词变成模块span
-                save(input);
+                save(input,event.shiftKey);
 
                 //在这之前要进入review模式
                 //传入position是最后要调用一个函数然后用的参数。。。
@@ -82,33 +99,30 @@ function onKeyDownInput(input) {
 
 
             } else {
+                window.left.playAudio(document.querySelector(".recite>.word").innerText)
+
                 let warn_str = "输入错误，请重新输入！！！"
-                let warnDiv = document.createElement("div");
 
-                warnDiv.innerText = warn_str
+                alert_msg(warn_str,this,true)
 
-                // console.log(this.offsetTop,this.offsetLeft,this)
-                warnDiv.style.left = this.offsetLeft + "px"
-                warnDiv.style.top = this.offsetTop - 26 + "px"
-
-                left.addClass(warnDiv, "warn_input")
-
-                this.parentNode.appendChild(warnDiv)
-
-                setTimeout(() => {
-                    this.parentNode.removeChild(warnDiv)
-                }, 400)
             }
 
             //空格
         } else if (event.keyCode === 32) {
+            //!toThink
+            window.left.playAudio(document.querySelector(".recite>.word").innerText)
             this.value = '';
             return false
         }
     };
 }
 
-function save(input) {
+/**
+ *
+ * @param input
+ * @param isShift 是否使用了Shift，默认undefined，如果shift单词是向上移动的，反之亦然
+ */
+function save(input,isShift) {
 
     let span = document.createElement("span");
 
@@ -121,6 +135,23 @@ function save(input) {
         span.style.top = input.style.top;
 
         span.setAttribute("index", indexSpan++)
+
+        //这个索引寻找中文
+        let tempListIndex=parseInt(document.querySelector(".recite").getAttribute("listIndex"))
+        if (isShift) {
+            if (!tempListIndex === 0) {
+                span.setAttribute("listIndex", tempListIndex + 1);
+            } else {
+                span.setAttribute("listIndex", tempListIndex);
+            }
+        } else {
+            //注意这里的写法,没有括号就被坑了
+            if (!(tempListIndex === left.word_list.length)) {
+                span.setAttribute("listIndex", tempListIndex - 1);
+            } else {
+                span.setAttribute("listIndex", tempListIndex);
+            }
+        }
 
         left.addClass(span, "unit")
 
@@ -153,9 +184,15 @@ function save(input) {
         //对span拖拽实现
         drag(span);
 
+        //点击播放
         span.onclick = function () {
             window.left.playAudio(span.innerText)
+            console.log(this.getAttribute("listIndex"))
+            let meaningMsg=left.word_list.children[this.getAttribute("listIndex")].querySelector(".meaning").innerText
+            alert_msg(meaningMsg,this,false)
         };
+
+
 
 
     } else {
@@ -186,8 +223,10 @@ function checkedRight(input, isShift) {
         return true;
     } else {
 
-        // alert("输入匹配，请重新输入")
-        //!todo如果使用alert会循环调用本身，不知道什么原因同时也不推荐使用这种方式
+
+        //鼠标移出，如果输入错误提示
+        window.left.playAudio(document.querySelector(".recite>.word").innerText)
+        alert_msg("输入错误，请重新输入！！！",input,true)
         return false;
     }
 }
@@ -316,13 +355,15 @@ function getRandomNum() {
 function intoReviewModel(position) {
     window.TIME = 2000
     window.index = 1
+    window.nextWordKeyCode=32
     let tempIndex1
 
     left.playAudio(map[index].innerText)
 
     left.addClass(map[index++], "review_word")
     document.onkeypress = function (event) {
-        if (event.keyCode === 32) {
+        if (!event.shiftKey&&event.keyCode === window.nextWordKeyCode) {
+
             left.removeClass(map[index - 1], "review_word");
 
             tempIndex1 = index
@@ -367,7 +408,7 @@ function review(index, tempIndex2, position) {
         return
     }
     document.onkeypress = function (event) {
-        if (event.keyCode === 32) {
+        if (!event.shiftKey&&event.keyCode === window.nextWordKeyCode) {
             left.removeClass(map[index - 1], "review_word")
             tempIndex2 = index
             // console.log(22222,tempIndex2)
@@ -383,7 +424,7 @@ function review(index, tempIndex2, position) {
             } else {
                 let tempIndex3
                 document.onkeypress = function (event) {
-                    if (event.keyCode === 32) {
+                    if (!event.shiftKey&&event.keyCode === window.nextWordKeyCode) {
                         left.removeClass(map[index - 1], "review_word");
 
                         tempIndex3 = index
@@ -420,7 +461,6 @@ function review(index, tempIndex2, position) {
 
             left.removeClass(map[index - 1], "review_word");
 
-            console.log(map[index])
             map[index]&&left.playAudio(map[index].innerText)
 
             left.addClass(map[index++], "review_word")
@@ -431,7 +471,7 @@ function review(index, tempIndex2, position) {
 
                 let tempIndex3
                 document.onkeypress = function (event) {
-                    if (event.keyCode === 32) {
+                    if (!event.shiftKey&&event.keyCode === window.nextWordKeyCode) {
                         left.removeClass(map[index - 1], "review_word");
 
                         tempIndex3 = index
@@ -481,7 +521,7 @@ function review(index, tempIndex2, position) {
  */
 
 function newInput(left, top, parentNode, isFirstWord) {
-    // 到最后一个不再创建新的输入框
+    // 到最后一个不在创建新的输入框
     if (window.left.word_list.current_word_index === window.left.word_list.children.length - 1) {
         if (!window.isLastNewinput) {
             window.isLastNewinput = 1;
@@ -528,6 +568,7 @@ function newInput(left, top, parentNode, isFirstWord) {
         newInput.focus();
 
         //创建输入框马上播放音频
+        // console.log(document.querySelector(".recite>.word"))
         window.left.playAudio(document.querySelector(".recite>.word").innerText)
     }else {
         alert("请将当前输入错误，请清空输入框后再取消")
@@ -596,4 +637,36 @@ function getMenu(eventParent) {
         };
     }
     return window.menuRightClick;
+}
+
+/**
+ * 在dom元素上方或下方显示文字，创建的div是挂载在dom的父元素的
+ * @param msg 显示的文字
+ * @param dom  那个dom元素
+ * @param isUpward 是否在上方
+ */
+function alert_msg(msg,dom,isUpward){
+
+    let warnDiv = document.createElement("div");
+
+    warnDiv.innerText = msg
+
+    // console.log(this.offsetTop,this.offsetLeft,this)
+    warnDiv.style.left = dom.offsetLeft + "px"
+    if (isUpward) {
+        //!todo待完善，数字26
+        warnDiv.style.top = dom.offsetTop - 26 + "px";
+        left.addClass(warnDiv, "warn_input");
+    } else {
+        //!todo待完善，数字38
+        warnDiv.style.top = dom.offsetTop + 40 + "px";
+        left.addClass(warnDiv, "warn_input");
+    }
+
+
+    dom.parentNode.appendChild(warnDiv)
+
+    setTimeout(() => {
+        dom.parentNode.removeChild(warnDiv)
+    }, 400)
 }
