@@ -46,8 +46,8 @@ window.loadingRight = function () {
 
         //阻止空格默认事件，双重保险
         event.preventDefault();
-        return false
-    },);
+        return false;
+    });
 
 
 }
@@ -55,15 +55,20 @@ window.loadingRight = function () {
 function onBlurInput(input) {
     input.onblur = function () {
         //在输入单词正确后按下enter时会触发失去焦点事件，但按键事件先执行
-        // 由于js是单线程的所以按键事件执行了一半并被中断了,会出现bug但忘了!todo
+        // 由于js是单线程的所以按键事件执行了一半并被中断了,会出现bug但忘了
         // console.log(1);
         //
         if (flag === 1) {
             return;
         }
-        if (!input.value || checkedRight(input)) {
+        if (!input.value||checkedRight(input)) {
             //!toThink 输入框失去焦点，播放一次音标,考虑
-            // window.left.playAudio(document.querySelector(".recite>.word").innerText)
+            //发布的时候改的别人看不到!todo
+            let listIndex = document.querySelector(".recite").getAttribute("listIndex");
+            let index=left.word_list.children.length-1===parseInt(listIndex)?listIndex:listIndex-1
+            let word = document.querySelector(`li[listindex='${index}']>.word`);
+
+            word&&window.left.playAudio(word.innerText)
             save(input)
         } else {
             input.focus()
@@ -82,6 +87,7 @@ function onKeyDownInput(input) {
             //checkedRight效验单词，这里同时也实现了，向下或向上的滑动，根据shiftKey
             if (checkedRight(input, event.shiftKey)) {
                 flag = 1;
+
                 let div = input.parentNode;
                 let left = input.offsetLeft;
                 let top = input.offsetTop;
