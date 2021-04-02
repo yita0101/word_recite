@@ -304,8 +304,8 @@ function intoReviewModel(position) {
             tempIndex1 = index
             left.addClass(map[index++], "review_word");
             window["hasOnKey" + tempIndex1] = true
-            console.log(111)
-            review(index, --index, position)
+
+            review(index, index, position)
 
             return false;
         }
@@ -316,17 +316,18 @@ function intoReviewModel(position) {
             left.removeClass(map[index - 1], "review_word");
             left.addClass(map[index++], "review_word");
 
-            review(index, --index, position)
-
+            review(index,index, position)
 
         }
-
-    }, TIME);
+        window["hasOnKey" + tempIndex1]=null
+    }, window.TIME);
 
 
 }
 
 function review(index, tempIndex2, position) {
+    // console.log(map)
+    // console.log(index,tempIndex2)
     if (map.length ===2) {
         newInput(position[0], position[1], position[2], position[3])
         return
@@ -335,12 +336,15 @@ function review(index, tempIndex2, position) {
         if (event.keyCode === 32) {
             left.removeClass(map[index - 1], "review_word")
             tempIndex2 = index
+            // console.log(22222,tempIndex2)
             window["hasOnKey" + tempIndex2] = true
+
+            // console.log(111,window["hasOnKey" + tempIndex2],"hasOnKey" + tempIndex2)
+
             left.addClass(map[index++], "review_word")
 
-
             if (index < map.length) {
-                review(index, index--, position);
+                review(index, index, position);
             } else {
                 let tempIndex3
                 document.onkeypress = function (event) {
@@ -358,27 +362,28 @@ function review(index, tempIndex2, position) {
 
                 setTimeout(function () {
                     if (!window["hasOnKey" + tempIndex3]) {
+                        window["hasOnKey" + tempIndex3]=null
                         left.removeClass(map[index - 1], "review_word");
                         left.addClass(map[index], "review_word");
 
                         newInput(position[0], position[1], position[2], position[3])
                     }
-
-                }, TIME);
+                    window["hasOnKey" + tempIndex3]=null
+                },window.TIME);
 
             }
-            return false;
         }
     };
 
     setTimeout(function () {
+        // console.log(222,window["hasOnKey" + tempIndex2],"hasOnKey" + tempIndex2)
         if (!window["hasOnKey" + tempIndex2]) {
 
             left.removeClass(map[index - 1], "review_word");
             left.addClass(map[index++], "review_word")
 
             if (index < map.length) {
-                review(index, index--, position);
+                review(index, index, position);
             } else {
 
                 let tempIndex3
@@ -388,6 +393,7 @@ function review(index, tempIndex2, position) {
 
                         tempIndex3 = index
                         left.addClass(map[index], "review_word");
+                        // console.log(3333,tempIndex3)
                         window["hasOnKey" + tempIndex3] = true
 
                         newInput(position[0], position[1], position[2], position[3])
@@ -396,7 +402,10 @@ function review(index, tempIndex2, position) {
                 };
 
                 setTimeout(function () {
+
+                    // console.log(!window["hasOnKey" + tempIndex3])
                     if (!window["hasOnKey" + tempIndex3]) {
+
                         left.removeClass(map[index - 1], "review_word");
                         left.addClass(map[index], "review_word");
 
@@ -404,13 +413,13 @@ function review(index, tempIndex2, position) {
 
 
                     }
-
-                }, TIME);
+                    window["hasOnKey" + tempIndex3]=null
+                }, window.TIME);
 
             }
         }
-
-    }, TIME);
+        window["hasOnKey" + tempIndex2] = null;
+    }, window.TIME);
 
 }
 
