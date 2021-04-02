@@ -1,6 +1,18 @@
 window.loadingLeft = function () {
 
+
+
     let left = document.querySelector(".left");
+    let right = document.querySelector(".right")
+    //根据视口设置left和right container的大小
+    left.style.height=right.style.height=window.innerHeight+"px"
+
+
+    //当浏览器改变时调整
+    window.onresize = function () {
+        left.style.height=right.style.height=window.innerHeight+"px"
+    };
+
     let word_list = document.querySelector(".word_list");
     window.left={last_word,next_word,addClass,word_list,toggleClass,removeClass}
     word_list.current_word_index=0
