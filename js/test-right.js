@@ -15,11 +15,10 @@ window.loadingRight = function () {
 
     //!todo 按delete删除
     //!todo 不能移过规定区域
-    //!todo 数据展示
     //!todo 按键与指定单词监听
-    //!todo 到最后一个不会收框
-
-
+    //!todo 鼠标移出，如果输入错误提示
+    //!todo 输入框失去焦点，播放一次音标
+    //!todo
     right.ondblclick = function (event) {
 
         event.cancelBubble = true
@@ -154,6 +153,9 @@ function save(input) {
         //对span拖拽实现
         drag(span);
 
+        span.onclick = function () {
+            window.left.playAudio(span.innerText)
+        };
 
 
     } else {
@@ -479,10 +481,21 @@ function review(index, tempIndex2, position) {
  */
 
 function newInput(left, top, parentNode, isFirstWord) {
+    // 到最后一个不再创建新的输入框
+    if (window.left.word_list.current_word_index === window.left.word_list.children.length - 1) {
+        if (!window.isLastNewinput) {
+            window.isLastNewinput = 1;
+        } else {
+            window.isLastNewinput = 0;
+            return;
+        }
+    }
     // console.log(left,top)
     let isHasInput = document.getElementsByTagName("input");
     //如果没有input。。。执行
     if (!isHasInput.length) {
+
+
         let newInput = document.createElement("input");
 
         // let offsetLeft;
@@ -517,7 +530,7 @@ function newInput(left, top, parentNode, isFirstWord) {
         //创建输入框马上播放音频
         window.left.playAudio(document.querySelector(".recite>.word").innerText)
     }else {
-        alert("请将当前输入框取消")
+        alert("请将当前输入错误，请清空输入框后再取消")
     }
 
 

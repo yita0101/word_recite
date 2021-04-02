@@ -14,7 +14,8 @@ window.loadingLeft = function () {
     };
 
     let word_list = document.querySelector(".word_list");
-    window.left={last_word,next_word,addClass,word_list,toggleClass,removeClass,playAudio}
+    window.left = {last_word, next_word, addClass, word_list, toggleClass, removeClass, playAudio};
+    //每一个向上或向下的操作都会背监控，初始从0开始
     word_list.current_word_index=0
 
     left.addEventListener("wheel", function (event) {
