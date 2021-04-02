@@ -1,16 +1,13 @@
 window.loadingRight = function () {
-    //在发生enter事件时，同时也会发生失去焦点事件，js是个单线程语言
     window.flag = 0
-    //每添加一个单词span，就会为这个span添加一个索引
     window.indexSpan = 1
     let input
     let right = document.querySelector(".right")
-
-    right.style.height=window.innerHeight+"px"
-    //存放所有的span，索引为0是他们的父元素
+    //创建一个地图，是描绘所有span的，索引为0是它的父元素
     window.map = [right]
     window.right={}
-
+    // word_list=document.querySelector(".word_list")
+    // let e = document.querySelector("body > div > div.right > input[type=text]");
     //!todo 按delete删除
     //!todo 不能移过规定区域
     //!todo 数据展示
@@ -30,7 +27,23 @@ window.loadingRight = function () {
 
         newInput(x, y, right, false)
 
-
+        // input.style.position = "absolute";
+        // input.type = "text";
+        //
+        //
+        // input.style.left = x + "px";
+        // input.style.top = y + "px";
+        //
+        // right.appendChild(input);
+        //
+        // input.focus();
+        //
+        //
+        // //对input失去焦点绑定
+        // onBlurInput(input);
+        //
+        // //对input键盘按下绑定,会同时执行鼠标事件的同时会触发失去焦点事件
+        // onKeyDownInput(input);
 
     }
 
@@ -40,7 +53,7 @@ window.loadingRight = function () {
 function onBlurInput(input) {
     input.onblur = function () {
         // console.log(1);
-        if (flag === 1) {
+        if (flag == 1) {
             return;
         }
         if (!input.value || checkedRight(input)) {
@@ -58,7 +71,7 @@ function onKeyDownInput(input) {
         event.cancelBubble = true
         // console.log(event.keyCode)
         //enter
-        if (event.keyCode === 13 && input.value) {
+        if (event.keyCode == 13 && input.value) {
             //checkedRight效验单词，这里同时也实现了，向下或向上的滑动，根据shiftKey
             if (checkedRight(input, event.shiftKey)) {
                 flag = 1;
@@ -126,7 +139,32 @@ function save(input) {
         rightDom.replaceChild(span, input);
 
 
-
+        //span绑定双击事件
+        // span.ondblclick = function (event) {
+        //
+        //     event = event || window.event;
+        //
+        //     let newInput = document.createElement("input")
+        //     newInput.type = "text";
+        //     newInput.style.position = "absolute";
+        //     newInput.style.left = span.style.left;
+        //     newInput.style.top = span.style.top;
+        //     newInput.value = span.innerText;
+        //
+        //     span.parentNode.appendChild(newInput);
+        //
+        //     onBlurInput(newInput);
+        //
+        //     onKeyDownInput(newInput);
+        //
+        //
+        //     span.parentNode.replaceChild(newInput,span);
+        //
+        //
+        //
+        //     newInput.focus();
+        //     event ? event.cancelBubble = true : event.stopPropagation();
+        // }
 
         span.ondblclick = function (event) {
             // toggleClass(this,"select")
@@ -251,36 +289,35 @@ function getRandomNum() {
     // console.log(rightDom.clientHeight-31,rightDom.clientWidth-150)
     let inputWidth=150
     // let inputHeight=31
-
     let maxW=rightDom.clientWidth - inputWidth
     let maxH=rightDom.clientHeight - map[1].clientHeight
     let randomW = Math.random() * (maxW);
     let randomH = Math.random() * (maxH);
-
     // console.log(maxH,maxW)
 
+    // let count=0
 
     let countCondition='false'
     for (let i = 1; i <map.length; i++) {
         //这里的变量写多了，不想改了。。。
 
-        let leftDot=map[i].offsetLeft-inputWidth<0?0:map[i].offsetLeft-inputWidth
+        right["leftDot"+i]=map[i].offsetLeft-inputWidth<0?0:map[i].offsetLeft-inputWidth
 
-        let topDot=map[i].offsetTop-map[i].clientHeight<0?0:map[i].offsetTop-map[i].clientHeight
-        // console.log(topDot)
+        right["topDot"+i]=map[i].offsetTop-map[i].clientHeight<0?0:map[i].offsetTop-map[i].clientHeight
+        // console.log(right["topDot"+i])
 
-        let borderW=leftDot===0?map[i].offsetLeft+map[i].clientWidth:leftDot+map[i].clientWidth+inputWidth
+        right["borderW"+i]=right["leftDot"+i]===0?map[i].offsetLeft+map[i].clientWidth:right["leftDot"+i]+map[i].clientWidth+inputWidth
 
-        borderW=borderW>maxW?maxW:borderW
+        right["borderW"+i]=right["borderW"+i]>maxW?maxW:right["borderW"+i]
 
-        let borderH=topDot===0?map[i].offsetTop+map[i].clientHeight:topDot+map[i].clientHeight*2
-        // console.log(borderH)
+        right["borderH"+i]=right["topDot"+i]===0?map[i].offsetTop+map[i].clientHeight:right["topDot"+i]+map[i].clientHeight*2
+        // console.log(right["borderH"+i])
 
-        borderH=borderH>maxH?maxH:borderH
+        right["borderH"+i]=right["borderH"+i]>maxH?maxH:right["borderH"+i]
 
-        // console.log(borderH)
+        // console.log(right["borderH"+i])
 
-        countCondition+="||"+`randomW > ${leftDot} && randomW < ${(borderW)} && randomH >${topDot} && randomH < ${(borderH)}`
+        countCondition+="||"+`randomW > ${right["leftDot"+i]} && randomW < ${(right["borderW"+i])} && randomH >${right["topDot"+i]} && randomH < ${(right["borderH"+i])}`
 
     }
     // console.log(countCondition)
@@ -303,7 +340,7 @@ function getRandomNum() {
 }
 
 
-//由于单线程，所以只能以事件和延时的方式推进执行
+
 function intoReviewModel(position) {
     window.TIME = 1000
     window.index = 1
@@ -533,4 +570,16 @@ function getMenu(eventParent) {
         };
     }
     return window.menuRightClick;
+}
+
+function sleep(milliSeconds) {
+    let StartTime = new Date().getTime();
+    let i = 0;
+    while (new Date().getTime() < StartTime + milliSeconds) {
+        if (window.isCancalSleep) {
+            break;
+        }
+    }
+    ;
+
 }

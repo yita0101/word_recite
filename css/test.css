@@ -4,23 +4,20 @@
 }
 .wrapper{
     width: 100%;
-    /*height: 100%;*/
     display: flex;
 }
 
 
 .right{
     width: 50%;
-    /*height: 1000px;*/
-    /*height: 100%;*/
+    height: 1000px;
     background-color:#BFA;
     position: relative;
 }
 
 .left{
     width: 50%;
-    /*height: 1000px;*/
-    /*height: 100%;*/
+    height: 1000px;
     background-color: #D7E8BA;
     position: relative;
     overflow:auto;
