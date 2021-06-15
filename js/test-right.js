@@ -537,12 +537,12 @@ function newInput(left, top, parentNode, isFirstWord) {
         }
     }
     // console.log(left,top)
-    let isHasInput = document.getElementsByTagName("input");
+    let isHasInput = document.getElementById("newInput");
     //如果没有input。。。执行
-    if (!isHasInput.length) {
-
+    if (!isHasInput) {
 
         let newInput = document.createElement("input");
+        newInput.id="newInput"
 
         // let offsetLeft;
         // let offsetTop =offsetLeft= Math.random();
@@ -577,7 +577,7 @@ function newInput(left, top, parentNode, isFirstWord) {
         // console.log(document.querySelector(".recite>.word"))
         window.left.playAudio(document.querySelector(".recite>.word").innerText)
     }else {
-        alert("请将当前输入错误，请清空输入框后再取消")
+        alert("请将当前输入错误，清空输入框后再取消")
     }
 
 
