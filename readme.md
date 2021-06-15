@@ -9,6 +9,8 @@
 
 ![a4](img/readme/a4.gif)
 
+[静态部署的，点击立即预览](https://arrake-one.github.io/word_recite/test.html)
+
 ## 1、立即开始：双击右边绿色区域
 
 (1) 预期结果：出现输入框，并播放当前红线对准的单词
