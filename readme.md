@@ -7,7 +7,7 @@
 
 ## 立即体验
 
-[静态部署的，点击立即体验](http://a4bdc.com/test.html)
+[静态部署的，点击立即体验](http://a4zbdc.com/test.html)
 
 ## 图片预览
 
